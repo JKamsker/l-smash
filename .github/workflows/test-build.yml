@@ -26,7 +26,7 @@ jobs:
           echo "${{ github.event.head_commit.message }}" 
       - name: Prepare Env
         run: |
-          sudo apt update && apt install -y git build-essential autoconf automake dos2unix
+          sudo apt update && sudo apt install -y git build-essential autoconf automake dos2unix
           sudo dos2unix configure && chmod +x configure
       - name: Build
         run: |

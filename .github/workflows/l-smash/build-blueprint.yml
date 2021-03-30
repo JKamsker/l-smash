@@ -1,0 +1,38 @@
+# inputs:
+#   name: 
+#     description: 'Your name'
+#     default: 'No name provided'
+runs:
+  using: "composite"
+  steps: 
+      - uses: actions/checkout@v2
+      - name: Debugging
+        run: |
+          echo "${{ github.ref }}" 
+          echo "${{ github.event.head_commit.message }}" 
+      - name: Prepare Env
+        run: |
+          sudo apt update && sudo apt install -y git build-essential autoconf automake dos2unix
+      - name: Build
+        run: |
+            mkdir -p ./build/bin
+            mkdir -p ./build/lib
+            mkdir -p ./build/include
+
+            sudo dos2unix configure && chmod +x configure
+            ./configure --prefix='./build' --enable-shared --disable-static
+            make install
+      - name: Packing Artifacts
+        uses: papeloto/action-zip@v1
+        with:
+          files: ./build
+          dest: ./Artifacts.zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            ./Artifacts.zip
+          tag_name: TestRelease

@@ -13,39 +13,54 @@ on:
 env:
   IMAGE_NAME: l-smash
 
+
 jobs:
-  build_and_push:
+  ubuntu-latest:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Debugging
-        run: |
-          echo "${{ github.ref }}" 
-          echo "${{ github.event.head_commit.message }}" 
-      - name: Prepare Env
-        run: |
-          sudo apt update && sudo apt install -y git build-essential autoconf automake dos2unix
-          sudo dos2unix configure && chmod +x configure
-      - name: Build
-        run: |
-            mkdir -p ./build/bin
-            mkdir -p ./build/lib
-            mkdir -p ./build/include
-            ./configure --prefix='./build' --enable-shared --disable-static
-            make install
-      - name: Packing Artifacts
-        uses: papeloto/action-zip@v1
-        with:
-          files: ./build
-          dest: ./Artifacts.zip
+    - uses: l-smash/build-blueprint@v2
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: |
-            ./Artifacts.zip
-          tag_name: TestRelease
+  ubuntu-16.04:
+    runs-on: ubuntu-16.04
+    if: github.event_name == 'push'
+    steps:
+    - uses: l-smash/build-blueprint@v2
+
+# jobs:
+#   build_and_push:
+#     runs-on: ubuntu-latest
+#     if: github.event_name == 'push'
+
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Debugging
+#         run: |
+#           echo "${{ github.ref }}" 
+#           echo "${{ github.event.head_commit.message }}" 
+#       - name: Prepare Env
+#         run: |
+#           sudo apt update && sudo apt install -y git build-essential autoconf automake dos2unix
+#       - name: Build
+#         run: |
+#             mkdir -p ./build/bin
+#             mkdir -p ./build/lib
+#             mkdir -p ./build/include
+
+#             sudo dos2unix configure && chmod +x configure
+#             ./configure --prefix='./build' --enable-shared --disable-static
+#             make install
+#       - name: Packing Artifacts
+#         uses: papeloto/action-zip@v1
+#         with:
+#           files: ./build
+#           dest: ./Artifacts.zip
+
+#       - name: Release
+#         uses: softprops/action-gh-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           files: |
+#             ./Artifacts.zip
+#           tag_name: TestRelease

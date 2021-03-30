@@ -35,3 +35,17 @@ jobs:
             mkdir -p ./build/include
             ./configure --prefix='./build' --enable-shared --disable-static
             make install
+      - name: Packing Artifacts
+        uses: papeloto/action-zip@v1
+        with:
+          files: ./build
+          dest: ./Artifacts.zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            ./Artifacts.zip
+          tag_name: TestRelease

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - dev
 
     # Publish `v1.2.3` tags as releases.
     tags:
@@ -25,8 +26,8 @@ jobs:
           echo "${{ github.event.head_commit.message }}" 
       - name: Prepare Env
         run: |
-          apt update && apt install -y git build-essential autoconf automake dos2unix
-          dos2unix configure && chmod +x configure
+          sudo apt update && apt install -y git build-essential autoconf automake dos2unix
+          sudo dos2unix configure && chmod +x configure
       - name: Build
         run: |
             mkdir -p ./build/bin
